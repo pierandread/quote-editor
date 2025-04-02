@@ -38,3 +38,26 @@ turbo_stream.after
 turbo_stream.update
 turbo_stream.replace
 except for the remove method, the turbo_stream helper expects a partial and locals as arguments to know which HTML it needs to append, prepend, replace from the DOM.
+
+#Stream
+compare to respond to in the controller is that
+the HTML is delivered via WebSocket this time instead of in response to an AJAX request
+
+    after_create_commit -> { broadcast_prepend_to "quotes", partial: "quotes/quote", locals: { quote: self }, target: "quotes" }
+By default, the target option will be equal to model_name.plural
+The partial default value is equal to calling to_partial_path on an instance of the model,
+which by default in Rails for our Quote model is equal to "quotes/quote".
+The locals default value is equal to { model_name.element.to_sym => self }
+which, in the context of our Quote model, is equal to { quote: self }.
+
+The broadcast_remove_later_to method does not exist because as the quote gets deleted from the database,
+it would be impossible for a background job to retrieve this quote in the database later to perform the job.
+
+    after_create_commit -> { broadcast_prepend_later_to "quotes" }
+    after_update_commit -> { broadcast_replace_later_to "quotes" }
+    after_destroy_commit -> { broadcast_remove_to "quotes" }
+Those three callbacks are equivalent to the following single line
+  broadcasts_to ->(quote) { "quotes" }, inserts_by: :prepend
+
+In our Quote model, we set three callbacks to broadcast creations, updates, and deletions to the "quotes" stream. Thanks to the broadcasts_to method, those three callbacks can be defined in one line.
+In our Quotes#index view, we explicitly mentioned that we want to subscribe to the changes that are broadcasted to the "quotes" stream.
