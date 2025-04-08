@@ -1,8 +1,11 @@
 first:
+  company: one
   name: First quote
 
 second:
-    name: Second quote
+  company: one
+  name: Second quote
 
 third:
-    name: Third quote
+  company: one
+  name: Third quote

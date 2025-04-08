@@ -61,3 +61,33 @@ Those three callbacks are equivalent to the following single line
 
 In our Quote model, we set three callbacks to broadcast creations, updates, and deletions to the "quotes" stream. Thanks to the broadcasts_to method, those three callbacks can be defined in one line.
 In our Quotes#index view, we explicitly mentioned that we want to subscribe to the changes that are broadcasted to the "quotes" stream.
+####
+rails g devise User
+#####
+Declare a controller method as a helper. For example, the following
+     makes the `current_user` and `logged_in?` controller methods available
+     to the view:
+
+         class ApplicationController < ActionController::Base
+           helper_method :current_user, :logged_in?
+
+           private
+             def current_user
+               @current_user ||= User.find_by(id: session[:user])
+             end
+
+             def logged_in?
+               current_user != nil
+             end
+         end
+
+     In a view:
+
+         <% if logged_in? -%>Welcome, <%= current_user.name %><% end -%>
+######
+broadcasts_to ->(quote) { [quote.company, "quotes"] }, inserts_by: :prepend
+Under the hood, the signed stream name is generated from the array returned by the lambda that is the first argument of the broadcasts_to method. The rules for secure broadcastings are the following:
+
+Users who share broadcastings should have the lambda return an array with the same values.
+Users who shouldn't share broadcastings should have the lambda return an array with different values.
+
