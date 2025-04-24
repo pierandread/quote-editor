@@ -91,3 +91,18 @@ Under the hood, the signed stream name is generated from the array returned by t
 Users who share broadcastings should have the lambda return an array with the same values.
 Users who shouldn't share broadcastings should have the lambda return an array with different values.
 
+###
+# Syntax 1
+redirect_to quotes_path, notice: "Quote was successfully created."
+
+# Syntax 2
+flash[:notice] = "Quote was successfully created."
+redirect_to quotes_path
+
+  <div
+    class="flash__message"
+    data-controller="removals"
+    data-action="animationend->removals#remove"
+  >
+
+  The HTML snippet above suggests that each flash message is connected to a RemovalsController thanks to the data-controller="removals" data attribute. When the animation ends, the function remove of the RemovalsController is called thanks to the data-action="animationend->removals#remove data attribute.
